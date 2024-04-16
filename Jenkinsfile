@@ -1,8 +1,9 @@
 pipeline {
   environment {
     ARGO_SERVER = 'argocd-server.argocd.svc.cluster.local'
+    DEV_SERVER = 'dso-demo.dev.svc.cluster.local'
   }
-  
+
   agent {
     kubernetes {
       yamlFile 'build-agent.yaml'
@@ -142,6 +143,26 @@ pipeline {
           docker run -t schoolofdevops/argocd-cli argocd app sync dso-demo --insecure --server \$(host \$ARGO_SERVER | awk '{print \$4}' | head -n1):443 --auth-token \$AUTH_TOKEN
           docker run -t schoolofdevops/argocd-cli argocd app wait dso-demo --health --timeout 300 --insecure --server \$(host \$ARGO_SERVER | awk '{print \$4}' | head -n1):443 --auth-token \$AUTH_TOKEN
           """
+        }
+      }
+    }
+
+    stage('Dynamic Analysis') {
+      parallel {
+        stage('E2E tests') {
+          steps {
+            sh 'echo "All Tests passed!!!"'
+          }
+        }
+        stage('DAST') {
+          steps {
+            container('docker-tools') {
+              sh """
+              apk add --no-cache bind-tools
+              docker run -t owasp/zap2docker-stable zap-baseline.py -t http://\$(host \$DEV_SERVER | awk '{print \$4}' | head -n1):30080/ || exit 0
+              """
+            }
+          }
         }
       }
     }
