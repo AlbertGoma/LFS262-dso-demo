@@ -159,7 +159,7 @@ pipeline {
             container('docker-tools') {
               sh """
               apk add --no-cache bind-tools
-              docker run -t softwaresecurityproject/zap-stable zap-baseline.py -t http://\$(host \$DEV_SERVER | awk '{print \$4}' | head -n1):30080/ || exit 0
+              docker run -t softwaresecurityproject/zap-stable zap-baseline.py -t http://\$(host \$DEV_SERVER | awk '{print \$4}' | head -n1):8080/ || exit 0
               """
             }
           }
