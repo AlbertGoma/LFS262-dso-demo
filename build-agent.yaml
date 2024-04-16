@@ -5,6 +5,12 @@ metadata:
     app: spring-build-ci
 spec:
   containers:
+    - name: slscan
+      image: shiftleft/sast-scan:v2.1.2
+      imagePullPolicy: Always
+      command:
+        - cat
+      tty: true
     - name: kaniko
       image: gcr.io/kaniko-project/executor:v1.6.0-debug
       imagePullPolicy: Always
