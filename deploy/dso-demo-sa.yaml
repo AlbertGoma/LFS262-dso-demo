@@ -3,4 +3,4 @@ kind: ServiceAccount
 metadata:
   creationTimestamp: null
   name: dso-demo
-automountServiceAccountToken: false
+#automountServiceAccountToken: false
